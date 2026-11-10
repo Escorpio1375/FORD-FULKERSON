@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NutriUPC | Flujo Máximo</title>
+<style>
+:root{--g:#176b4d;--g2:#2f8b68;--lime:#b7d86c;--bg:#f3f6f3;--card:#fff;--ink:#173028;--muted:#61736c;--line:#d8e3dd;--red:#c14343;--orange:#d98b45;--blue:#3977b8}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select{font:inherit}.hidden{display:none!important}
+header{background:linear-gradient(135deg,#0f523b,#247a58);color:#fff;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;gap:18px;box-shadow:0 4px 18px #153a2c33;position:sticky;top:0;z-index:20}
+.brand h1{font-size:19px;margin:0}.brand p{margin:4px 0 0;color:#d9eee5;font-size:12px}.status{background:#ffffff17;border:1px solid #ffffff38;padding:8px 12px;border-radius:999px;font-size:12px}
+.app{display:grid;grid-template-columns:245px 1fr;min-height:calc(100vh - 78px)}
+aside{background:#123d30;color:#fff;padding:22px 14px}.nav-btn{width:100%;border:0;background:transparent;color:#d8ebe3;text-align:left;padding:12px 13px;border-radius:10px;margin:4px 0;cursor:pointer}.nav-btn:hover,.nav-btn.active{background:#ffffff16;color:#fff}.nav-btn span{display:inline-block;width:26px;color:var(--lime)}
+main{padding:24px;min-width:0}.view{max-width:1320px;margin:auto}.hero{background:linear-gradient(135deg,#fff,#eef6f1);border:1px solid var(--line);border-radius:18px;padding:32px;display:grid;grid-template-columns:1.3fr .7fr;gap:25px}.hero h2{font-size:34px;line-height:1.1;margin:0 0 12px}.hero p{color:var(--muted);line-height:1.6}.hero-visual{background:var(--g);border-radius:16px;padding:22px;color:#fff;display:flex;flex-direction:column;justify-content:center}.flow-item{display:flex;align-items:center;gap:12px;margin:7px 0}.dot{width:34px;height:34px;border-radius:50%;background:#fff;color:var(--g);display:grid;place-items:center;font-weight:700}.vline{height:14px;border-left:2px solid var(--lime);margin-left:16px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:20px;box-shadow:0 7px 24px #304b4020}.card h3{margin:0 0 12px}.card p,.small{color:var(--muted);font-size:14px;line-height:1.5}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px}.btn{border:0;border-radius:10px;padding:10px 15px;cursor:pointer;font-weight:650}.primary{background:var(--g);color:#fff}.primary:hover{background:#0e523a}.secondary{background:#e5efe9;color:var(--g)}.danger{background:#fae7e7;color:#9d2929}.btn:disabled{opacity:.45;cursor:not-allowed}
+label{display:block;font-size:13px;font-weight:700;margin:10px 0 6px}input,select{border:1px solid #c9d7d0;border-radius:9px;padding:9px 10px;background:#fff;color:var(--ink)}.inline{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.inline>div{flex:1;min-width:135px}
+.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}.matrix{border-collapse:collapse;width:max-content;min-width:100%;background:#fff}.matrix th,.matrix td{border:1px solid #dce6e1;padding:7px;text-align:center;min-width:58px}.matrix th{background:#eaf2ed;color:var(--g)}.matrix input{width:58px;text-align:center;padding:6px}.matrix input:disabled{background:#edf1ef;color:#999}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin:12px 0}.legend div{padding:8px 10px;border-radius:8px;background:#edf4ef;font-size:13px}.canvas{width:100%;min-height:500px;border:1px solid var(--line);border-radius:14px;background:#fff;overflow:auto}.canvas svg{display:block;min-width:850px;width:100%;height:560px}.edge-label{font-size:12px;font-weight:700}.node-label{font-size:15px;font-weight:800}.area-label{font-size:11px;fill:#52665d}.section-title{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:16px}.section-title h2{margin:0;font-size:27px}.section-title p{margin:4px 0 0;color:var(--muted)}
+.steps{display:grid;gap:10px}.step{border-left:5px solid var(--g2);background:#f7faf8;padding:12px 14px;border-radius:10px}.step b{color:var(--g)}.result-number{font-size:42px;font-weight:800;color:var(--g)}.badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#e8f2ec;color:var(--g);font-size:12px;font-weight:700}.warn{background:#fff4df;border:1px solid #f0d29b;padding:12px;border-radius:10px;color:#7a5317}.toast{position:fixed;bottom:20px;right:20px;background:#173028;color:#fff;padding:12px 16px;border-radius:10px;box-shadow:0 8px 25px #0003;z-index:40}.members{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}.member{background:#fff;border:1px solid var(--line);border-radius:12px;padding:15px}.theory h3{margin-top:24px}.theory p{line-height:1.65;color:#455c53}.footer-note{font-size:12px;color:#71827b;margin-top:14px}
+
+.iteration-viewer{margin-top:18px;border:2px solid #cfe0d7;background:linear-gradient(180deg,#ffffff,#f6faf7)}
+.slider-row{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;margin:18px 0 10px}
+.iteration-slider{width:100%;accent-color:var(--g);cursor:pointer}
+.iteration-header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.iteration-count{font-size:13px;font-weight:800;color:var(--g);background:#e5f0e9;padding:6px 10px;border-radius:999px}
+.iteration-details{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+.metric{background:#fff;border:1px solid var(--line);border-radius:11px;padding:12px}
+.metric small{display:block;color:var(--muted);margin-bottom:5px}.metric strong{display:block;color:var(--ink);font-size:16px}
+.path-box{padding:12px 14px;border-radius:11px;background:#fff6e7;border:1px solid #f0c982;color:#704a0f;margin:10px 0}
+.iteration-help{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:8px 0 12px}
+.key{display:inline-flex;align-items:center;gap:6px}.swatch{width:13px;height:13px;border-radius:3px;display:inline-block}
+.active-pulse{animation:pulseEdge 1.1s ease-in-out infinite alternate}@keyframes pulseEdge{from{opacity:.62}to{opacity:1}}
+@media(max-width:760px){.iteration-details{grid-template-columns:1fr}.slider-row{grid-template-columns:1fr}.slider-row button{width:100%}}
+
+@media(max-width:900px){.app{grid-template-columns:1fr}aside{display:flex;overflow:auto;padding:8px;position:sticky;top:78px;z-index:15}.nav-btn{min-width:155px;margin:0 3px}.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}main{padding:14px}.status{display:none}}
+</style>
+</head>
+<body>
+<header><div class="brand"><h1>INDUSTRIAS ALIMENTARIAS NUTRIUPC S.A.C.</h1><p>Sistema web de optimización del flujo productivo</p></div><div class="status" id="globalStatus">Sin red cargada</div></header>
+<div class="app">
+<aside id="sidebar">
+<button class="nav-btn active" data-view="inicio"><span>⌂</span>Inicio</button>
+<button class="nav-btn" data-view="config"><span>▦</span>Construir red</button>
+<button class="nav-btn" data-view="grafo"><span>◉</span>Visualizar grafo</button>
+<button class="nav-btn" data-view="resolver"><span>▶</span>Calcular flujo</button>
+<button class="nav-btn" data-view="teoria"><span>?</span>Fundamentos</button>
+<button class="nav-btn" data-view="integrantes"><span>◎</span>Integrantes</button>
+</aside>
+<main>
+<section class="view" id="view-inicio">
+<div class="hero"><div><span class="badge">PROYECTO FINAL</span><h2>Ford-Fulkerson aplicado a una cadena de producción</h2><p>Construye una red automáticamente o ingresa una matriz manual. Visualiza un grafo simétrico e interactivo, selecciona fuente y sumidero y observa cada camino aumentante hasta obtener el flujo máximo.</p><div class="actions"><button class="btn primary" onclick="showView('config')">Crear una red</button><button class="btn secondary" onclick="loadDemo()">Cargar caso de demostración</button></div></div><div class="hero-visual"><div class="flow-item"><span class="dot">A</span>Recepción de materia prima</div><div class="vline"></div><div class="flow-item"><span class="dot">B</span>Procesamiento</div><div class="vline"></div><div class="flow-item"><span class="dot">C</span>Empaquetado</div><div class="vline"></div><div class="flow-item"><span class="dot">D</span>Despacho</div></div></div>
+<div class="grid"><div class="card"><h3>Interfaz interactiva</h3><p>La aplicación funciona directamente en Chrome, Edge o Firefox. No necesita instalación, servidor ni librerías externas.</p></div><div class="card"><h3>Visualización simétrica</h3><p>Los vértices se distribuyen por niveles y se centran verticalmente. El grafo se redibuja según la fuente y el sumidero seleccionados.</p></div></div>
+</section>
+
+<section class="view hidden" id="view-config">
+<div class="section-title"><div><h2>Construir red de producción</h2><p>Elige el número de vértices y el tipo de ingreso.</p></div></div>
+<div class="card"><div class="inline"><div><label>Número de vértices</label><input id="vertexCount" type="number" min="5" max="15" value="5"></div><div><label>Modo</label><select id="mode"><option value="auto">Generación automática</option><option value="manual">Ingreso manual</option></select></div><button class="btn primary" onclick="prepareNetwork()">Preparar matriz</button><button class="btn secondary" onclick="loadDemo()">Caso de 5 vértices</button></div><p class="small">Los vértices se identifican con letras de A hasta O. La fila es el origen y la columna es el destino.</p></div>
+<div class="card hidden" id="matrixCard"><h3 id="matrixTitle">Matriz de capacidades</h3><div id="areaLegend" class="legend"></div><div class="table-wrap" id="matrixContainer"></div><div class="actions"><button class="btn primary" onclick="saveMatrixAndGraph()">Guardar y visualizar</button><button class="btn secondary" id="regenBtn" onclick="regenerate()">Volver a generar</button><button class="btn danger" onclick="clearNetwork()">Limpiar</button></div></div>
+</section>
+
+<section class="view hidden" id="view-grafo">
+<div class="section-title"><div><h2>Red de producción</h2><p>Selecciona un vértice para destacarlo. Posicionamiento simétrico por niveles.</p></div><div class="actions"><button class="btn secondary" onclick="downloadSVG('capacity')">Descargar SVG</button></div></div>
+<div class="card"><div id="graphLegend" class="legend"></div><div class="canvas" id="graphCanvas"></div><div class="actions"><button class="btn primary" onclick="showView('resolver')">Seleccionar fuente y sumidero</button><button class="btn secondary" onclick="showView('config')">Editar matriz</button></div></div>
+</section>
+
+<section class="view hidden" id="view-resolver">
+<div class="section-title"><div><h2>Calcular flujo máximo</h2><p>Ford-Fulkerson con búsqueda en profundidad.</p></div></div>
+<div class="card"><div class="inline"><div><label>Fuente</label><select id="sourceSelect"></select></div><div><label>Sumidero</label><select id="sinkSelect"></select></div><button class="btn primary" onclick="runAlgorithm()">Ejecutar algoritmo</button></div><div id="solveWarning" class="warn hidden"></div></div>
+<div class="grid hidden" id="resultGrid"><div class="card"><h3>Resultado</h3><div class="result-number"><span id="maxFlowValue">0</span> t/h</div><p>Flujo máximo entre <b id="sourceName"></b> y <b id="sinkName"></b>.</p><button class="btn secondary" onclick="downloadSVG('flow')">Descargar red final SVG</button></div><div class="card"><h3>Iteraciones</h3><div class="steps" id="stepsContainer"></div></div></div>
+
+<div class="card iteration-viewer hidden" id="iterationViewer">
+  <div class="iteration-header">
+    <div><h3 style="margin:0">Proceso interactivo del algoritmo</h3><p class="small" style="margin:5px 0 0">Mueve el control para observar cómo cambia el flujo después de cada camino aumentante.</p></div>
+    <span class="iteration-count" id="iterationLabel">Estado inicial</span>
+  </div>
+  <div class="slider-row">
+    <button class="btn secondary" id="prevIteration" onclick="changeIteration(-1)">← Anterior</button>
+    <input class="iteration-slider" type="range" id="iterationSlider" min="0" max="0" value="0" step="1" oninput="renderIteration(Number(this.value))">
+    <button class="btn secondary" id="nextIteration" onclick="changeIteration(1)">Siguiente →</button>
+  </div>
+  <div class="iteration-help">
+    <span class="key"><i class="swatch" style="background:#f0a23b"></i>camino de la iteración</span>
+    <span class="key"><i class="swatch" style="background:#2f8b68"></i>flujo previo</span>
+    <span class="key"><i class="swatch" style="background:#c14343"></i>arista saturada</span>
+    <span class="key"><i class="swatch" style="background:#9aa7a1"></i>sin flujo</span>
+  </div>
+  <div id="iterationInfo"></div>
+  <div class="canvas" id="iterationGraph"></div>
+  <div style="margin-top:14px"><h4 style="margin:0 0 8px">Matriz residual de la etapa</h4><div class="table-wrap" id="iterationResidual"></div></div>
+</div>
+
+<div class="card hidden" id="finalGraphCard"><h3>Red de flujo final</h3><p class="small">Verde: flujo utilizado. Rojo: arista saturada. Gris: arista sin flujo. Etiqueta: flujo/capacidad.</p><div class="canvas" id="finalGraphCanvas"></div></div>
+<div class="card hidden" id="residualCard"><h3>Matriz residual final</h3><div class="table-wrap" id="residualContainer"></div></div>
+</section>
+
+<section class="view hidden theory" id="view-teoria"><div class="section-title"><div><h2>Fundamentos teóricos</h2><p>Conceptos utilizados por la aplicación.</p></div></div><div class="card"><h3>Red de flujo</h3><p>Un grafo dirigido donde cada arista tiene una capacidad. La fuente origina el flujo, el sumidero lo recibe y los vértices intermedios conservan el flujo.</p><h3>Camino aumentante</h3><p>Ruta de la fuente al sumidero cuyas aristas tienen capacidad residual positiva.</p><h3>Cuello de botella</h3><p>La menor capacidad residual del camino. Determina cuánto flujo adicional puede enviarse en esa iteración.</p><h3>Red residual</h3><p>Representa la capacidad disponible y permite corregir decisiones anteriores mediante aristas inversas.</p><h3>Ford-Fulkerson</h3><p>Busca caminos aumentantes, incrementa el flujo y actualiza la red residual hasta que no exista otra ruta disponible.</p><h3>Búsqueda en profundidad</h3><p>Explora una ruta hasta donde sea posible y retrocede cuando no puede continuar. En la aplicación se usa para localizar cada camino aumentante.</p></div></section>
+
+<section class="view hidden" id="view-integrantes"><div class="section-title"><div><h2>Integrantes</h2><p>Equipo del proyecto de Matemática Computacional.</p></div></div><div class="members"><div class="member"><b>Christopher Rojas Caman</b><p>U202417579</p></div><div class="member"><b>Matias Andres Leiva Castillo</b><p>U202522708</p></div><div class="member"><b>Marcio Akin Paca Rupiri</b><p>U202424795</p></div><div class="member"><b>Carlos Eduardo Aguilar Quiroz</b><p>U202617032</p></div><div class="member"><b>Julio César Boulangger Bernal</b><p>U202318101</p></div></div></section>
+</main></div>
+<div class="toast hidden" id="toast"></div>
+<script>
+const AREAS=['Recepción de materia prima','Lavado','Pelado','Selección','Enlatado','Etiquetado','Empaquetado','Control de calidad','Almacenamiento','Despacho','Proceso K','Proceso L','Proceso M','Proceso N','Proceso O'];
+let capacity=[], flow=[], residual=[], steps=[], currentMode='auto', selectedNode=-1;
+const letter=i=>String.fromCharCode(65+i); const el=id=>document.getElementById(id);
+function toast(msg){el('toast').textContent=msg;el('toast').classList.remove('hidden');setTimeout(()=>el('toast').classList.add('hidden'),2300)}
+function showView(name){document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));el('view-'+name).classList.remove('hidden');document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===name));if(name==='grafo') renderCapacityGraph();if(name==='resolver') populateSelectors()}
+document.querySelectorAll('.nav-btn').forEach(b=>b.onclick=()=>showView(b.dataset.view));
+function validateN(){const n=Number(el('vertexCount').value);if(!Number.isInteger(n)||n<5||n>15){toast('El número de vértices debe estar entre 5 y 15.');return 0}return n}
+function makeZero(n){return Array.from({length:n},()=>Array(n).fill(0))}
+function generateAuto(n){const m=makeZero(n), mids=n-2, cols=Math.max(1,Math.ceil(mids/3)), levels=Array.from({length:cols},()=>[]);for(let k=0;k<mids;k++)levels[Math.floor(k/3)].push(k+1);const cap=()=>5+Math.floor(Math.random()*26);levels[0].forEach(v=>m[0][v]=cap());for(let c=0;c<cols-1;c++){levels[c].forEach((u,i)=>{const v=levels[c+1][i%levels[c+1].length];m[u][v]=cap();levels[c+1].forEach(w=>{if(w!==v&&Math.random()<0.18)m[u][w]=cap()})})}levels[cols-1].forEach(u=>m[u][n-1]=cap());return m}
+function prepareNetwork(){const n=validateN();if(!n)return;currentMode=el('mode').value;capacity=currentMode==='auto'?generateAuto(n):makeZero(n);buildMatrixEditor();el('matrixCard').classList.remove('hidden');el('regenBtn').textContent=currentMode==='auto'?'Volver a generar':'Borrar valores';updateStatus()}
+function buildLegend(target,n){target.innerHTML='';for(let i=0;i<n;i++)target.innerHTML+=`<div><b>[${letter(i)}]</b> ${AREAS[i]}</div>`}
+function buildMatrixEditor(){const n=capacity.length;buildLegend(el('areaLegend'),n);let h='<table class="matrix"><thead><tr><th>Origen \\ Destino</th>';for(let j=0;j<n;j++)h+=`<th>${letter(j)}</th>`;h+='</tr></thead><tbody>';for(let i=0;i<n;i++){h+=`<tr><th>${letter(i)}</th>`;for(let j=0;j<n;j++){const d=i===j?'disabled':'';h+=`<td><input ${d} min="0" max="999" type="number" data-i="${i}" data-j="${j}" value="${capacity[i][j]}"></td>`}h+='</tr>'}h+='</tbody></table>';el('matrixContainer').innerHTML=h}
+function readMatrix(){document.querySelectorAll('#matrixContainer input').forEach(inp=>{const i=+inp.dataset.i,j=+inp.dataset.j,v=Math.max(0,Math.min(999,Number(inp.value)||0));capacity[i][j]=i===j?0:v;inp.value=capacity[i][j]})}
+function saveMatrixAndGraph(){readMatrix();if(!capacity.some(r=>r.some(v=>v>0))){toast('La matriz debe contener al menos una conexión.');return}updateStatus();showView('grafo')}
+function regenerate(){if(!capacity.length)return;if(currentMode==='auto')capacity=generateAuto(capacity.length);else capacity=makeZero(capacity.length);buildMatrixEditor()}
+function clearNetwork(){capacity=[];flow=[];residual=[];el('matrixCard').classList.add('hidden');updateStatus();toast('Red eliminada.')}
+function loadDemo(){capacity=[[0,10,8,0,0],[0,0,0,6,0],[0,0,0,4,0],[0,0,0,0,10],[0,0,0,0,0]];currentMode='manual';el('vertexCount').value=5;el('mode').value='manual';buildMatrixEditor();el('matrixCard').classList.remove('hidden');updateStatus();showView('config');toast('Caso de demostración cargado.')}
+function updateStatus(){el('globalStatus').textContent=capacity.length?`${capacity.length} vértices · ${capacity.flat().filter(v=>v>0).length} aristas`:'Sin red cargada'}
+
+function levelsFromSource(cap,source){const n=cap.length,dist=Array(n).fill(Infinity);dist[source]=0;const q=[source];while(q.length){const u=q.shift();for(let v=0;v<n;v++)if(cap[u][v]>0&&dist[v]===Infinity){dist[v]=dist[u]+1;q.push(v)}}let max=0;for(let i=0;i<n;i++)if(Number.isFinite(dist[i]))max=Math.max(max,dist[i]);for(let i=0;i<n;i++)if(!Number.isFinite(dist[i]))dist[i]=max+1;return dist}
+function symmetricPositions(cap,source=0,sink=cap.length-1){const n=cap.length,W=1180,H=510,marginX=95,marginY=75;let level=levelsFromSource(cap,source);let sinkLevel=Math.max(...level.filter(Number.isFinite));if(level[sink]<=level[source])level[sink]=sinkLevel+1;const groups=new Map();for(let i=0;i<n;i++){if(i===source)level[i]=0;if(i===sink)continue;const l=level[i];if(!groups.has(l))groups.set(l,[]);groups.get(l).push(i)}const maxLevel=Math.max(1,...level);const pos=Array(n);pos[source]={x:marginX,y:H/2};pos[sink]={x:W-marginX,y:H/2};for(const [l,nodes] of groups){if(l===0)continue;const x=marginX+l*(W-2*marginX)/Math.max(1,maxLevel);const ordered=[...nodes].sort((a,b)=>a-b),gap=Math.min(130,(H-2*marginY)/Math.max(1,ordered.length-1));const start=H/2-gap*(ordered.length-1)/2;ordered.forEach((v,k)=>pos[v]={x:Math.min(x,W-marginX-80),y:start+k*gap})}for(let i=0;i<n;i++)if(!pos[i])pos[i]={x:W/2,y:H/2};return {pos,W,H}}
+function escapeXML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]))}
+function graphSVG(cap,flowMatrix=null,source=0,sink=cap.length-1,activePath=[]){
+if(!cap.length)return '<p class="warn">Primero construye una red.</p>';
+const {pos,W,H}=symmetricPositions(cap,source,sink);
+const active=new Set();for(let k=0;k+1<activePath.length;k++)active.add(`${activePath[k]}-${activePath[k+1]}`);
+let defs=`<defs>
+<marker id="aGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#9aa7a1"/></marker>
+<marker id="aGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#2f8b68"/></marker>
+<marker id="aRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#c14343"/></marker>
+<marker id="aActive" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#f0a23b"/></marker>
+</defs>`;
+let edges='',nodes='';
+for(let i=0;i<cap.length;i++)for(let j=0;j<cap.length;j++)if(cap[i][j]>0){
+ const p1=pos[i],p2=pos[j],dx=p2.x-p1.x,dy=p2.y-p1.y,len=Math.hypot(dx,dy)||1,ux=dx/len,uy=dy/len;
+ let ox=0,oy=0;if(cap[j][i]>0){ox=-uy*(i<j?10:-10);oy=ux*(i<j?10:-10)}
+ const x1=p1.x+ux*31+ox,y1=p1.y+uy*31+oy,x2=p2.x-ux*34+ox,y2=p2.y-uy*34+oy;
+ const fl=flowMatrix?Math.max(0,flowMatrix[i][j]):null,isActive=active.has(`${i}-${j}`),sat=flowMatrix&&fl===cap[i][j],used=flowMatrix&&fl>0;
+ const color=isActive?'#f0a23b':sat?'#c14343':used?'#2f8b68':'#9aa7a1',marker=isActive?'aActive':sat?'aRed':used?'aGreen':'aGray';
+ const label=flowMatrix?`${fl}/${cap[i][j]}`:`${cap[i][j]}`,mx=(x1+x2)/2,my=(y1+y2)/2-9;
+ edges+=`<g class="edge ${isActive?'active-pulse':''}"><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="${isActive?5:used?3:2}" marker-end="url(#${marker})"/><rect x="${mx-24}" y="${my-14}" width="48" height="22" rx="6" fill="white" stroke="${color}" stroke-width="${isActive?2:1}"/><text x="${mx}" y="${my+2}" text-anchor="middle" class="edge-label" fill="${color}">${label}</text></g>`;
+}
+for(let i=0;i<cap.length;i++){
+ const p=pos[i],onPath=activePath.includes(i),fill=i===source?'#bee59b':i===sink?'#b9d7f3':onPath?'#ffe0a8':selectedNode===i?'#ffd98a':'#f7e3bd',stroke=onPath?'#f0a23b':'#173028';
+ nodes+=`<g class="node" data-node="${i}" style="cursor:pointer"><circle cx="${p.x}" cy="${p.y}" r="${onPath?31:28}" fill="${fill}" stroke="${stroke}" stroke-width="${onPath?4:2.5}"/><text x="${p.x}" y="${p.y+6}" text-anchor="middle" class="node-label">${letter(i)}</text><text x="${p.x}" y="${p.y+48}" text-anchor="middle" class="area-label">${escapeXML(AREAS[i])}</text></g>`;
+}
+return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${defs}<rect width="100%" height="100%" fill="#fff"/>${edges}${nodes}</svg>`;
+}
+function attachNodeEvents(container){container.querySelectorAll('.node').forEach(n=>n.onclick=()=>{selectedNode=+n.dataset.node;renderCapacityGraph();toast(`[${letter(selectedNode)}] ${AREAS[selectedNode]}`)})}
+function renderCapacityGraph(){if(!capacity.length){el('graphCanvas').innerHTML='<div class="warn">Primero crea una red desde “Construir red”.</div>';return}buildLegend(el('graphLegend'),capacity.length);const s=Number(el('sourceSelect')?.value)||0,k=Number(el('sinkSelect')?.value)||capacity.length-1;el('graphCanvas').innerHTML=graphSVG(capacity,null,s,k);attachNodeEvents(el('graphCanvas'))}
+function populateSelectors(){if(!capacity.length){el('solveWarning').textContent='Primero construye una red.';el('solveWarning').classList.remove('hidden');return}el('solveWarning').classList.add('hidden');const options=capacity.map((_,i)=>`<option value="${i}">[${letter(i)}] ${AREAS[i]}</option>`).join('');el('sourceSelect').innerHTML=options;el('sinkSelect').innerHTML=options;el('sourceSelect').value=0;el('sinkSelect').value=capacity.length-1}
+function dfs(u,t,res,vis,parent){vis[u]=true;if(u===t)return true;for(let v=0;v<res.length;v++)if(!vis[v]&&res[u][v]>0){parent[v]=u;if(dfs(v,t,res,vis,parent))return true}return false}
+function fordFulkerson(cap,s,t){
+ const n=cap.length,res=cap.map(r=>[...r]),f=makeZero(n),log=[];let max=0,it=1;
+ while(true){
+  const vis=Array(n).fill(false),parent=Array(n).fill(-1);if(!dfs(s,t,res,vis,parent))break;
+  let bottle=Infinity,path=[];for(let v=t;v!==s;v=parent[v])bottle=Math.min(bottle,res[parent[v]][v]);
+  for(let v=t;;v=parent[v]){path.push(v);if(v===s)break}path.reverse();
+  const capacities=[];for(let k=0;k+1<path.length;k++)capacities.push({u:path[k],v:path[k+1],value:res[path[k]][path[k+1]]});
+  const changes=[];
+  for(let v=t;v!==s;v=parent[v]){
+   const u=parent[v],before=res[u][v],rev=res[v][u];res[u][v]-=bottle;res[v][u]+=bottle;
+   if(cap[u][v]>0)f[u][v]+=bottle;else f[v][u]-=bottle;
+   changes.push(`${letter(u)}→${letter(v)}: ${before}−${bottle}=${res[u][v]}; inversa ${rev}+${bottle}=${res[v][u]}`);
+  }
+  max+=bottle;
+  const flowSnapshot=f.map(r=>r.map(v=>Math.max(0,v)));
+  log.push({it:it++,path:[...path],bottle,total:max,capacities,changes,flow:flowSnapshot,residual:res.map(r=>[...r])});
+ }
+ for(let i=0;i<n;i++)for(let j=0;j<n;j++)if(f[i][j]<0)f[i][j]=0;
+ return{max,flow:f,residual:res,steps:log};
+}
+function runAlgorithm(){
+ if(!capacity.length)return;
+ const s=+el('sourceSelect').value,t=+el('sinkSelect').value;
+ if(s===t){el('solveWarning').textContent='La fuente y el sumidero deben ser diferentes.';el('solveWarning').classList.remove('hidden');return}
+ el('solveWarning').classList.add('hidden');
+ const r=fordFulkerson(capacity,s,t);flow=r.flow;residual=r.residual;steps=r.steps;
+ el('maxFlowValue').textContent=r.max;el('sourceName').textContent=`[${letter(s)}] ${AREAS[s]}`;el('sinkName').textContent=`[${letter(t)}] ${AREAS[t]}`;
+ el('stepsContainer').innerHTML=r.steps.length?r.steps.map(x=>`<div class="step"><b>Iteración ${x.it}</b><br>Camino: ${x.path.map(letter).join(' → ')}<br>Cuello de botella: ${x.bottle} t/h · Flujo acumulado: ${x.total} t/h</div>`).join(''):'<div class="warn">No existe un camino aumentante. El flujo máximo es 0.</div>';
+ el('finalGraphCanvas').innerHTML=graphSVG(capacity,flow,s,t);el('residualContainer').innerHTML=matrixHTML(residual);
+ ['resultGrid','finalGraphCard','residualCard','iterationViewer'].forEach(id=>el(id).classList.remove('hidden'));
+ const slider=el('iterationSlider');slider.min=0;slider.max=r.steps.length;slider.value=0;
+ renderIteration(0);
+ toast(`Flujo máximo calculado: ${r.max} t/h`);
+}
+function changeIteration(delta){const slider=el('iterationSlider');const next=Math.max(+slider.min,Math.min(+slider.max,+slider.value+delta));slider.value=next;renderIteration(next)}
+function renderIteration(index){
+ if(!capacity.length)return;
+ const s=+el('sourceSelect').value,t=+el('sinkSelect').value,slider=el('iterationSlider');
+ slider.value=index;el('prevIteration').disabled=index===0;el('nextIteration').disabled=index===+slider.max;
+ if(index===0){
+  el('iterationLabel').textContent='Estado inicial';
+  el('iterationInfo').innerHTML=`<div class="path-box"><b>Inicio:</b> todos los flujos son 0. La búsqueda en profundidad comenzará desde [${letter(s)}] hasta [${letter(t)}].</div><div class="iteration-details"><div class="metric"><small>Camino actual</small><strong>Aún no calculado</strong></div><div class="metric"><small>Cuello de botella</small><strong>0 t/h</strong></div><div class="metric"><small>Flujo acumulado</small><strong>0 t/h</strong></div></div>`;
+  el('iterationGraph').innerHTML=graphSVG(capacity,makeZero(capacity.length),s,t,[]);
+  el('iterationResidual').innerHTML=matrixHTML(capacity);
+  return;
+ }
+ const step=steps[index-1];
+ const capText=step.capacities.map(e=>`${letter(e.u)}→${letter(e.v)} = ${e.value}`).join(' · ');
+ el('iterationLabel').textContent=`Iteración ${step.it} de ${steps.length}`;
+ el('iterationInfo').innerHTML=`<div class="path-box"><b>Camino aumentante:</b> ${step.path.map(letter).join(' → ')}<br><span class="small">Capacidades residuales antes de aumentar: ${capText}</span></div><div class="iteration-details"><div class="metric"><small>Camino actual</small><strong>${step.path.map(letter).join(' → ')}</strong></div><div class="metric"><small>Cuello de botella</small><strong>${step.bottle} t/h</strong></div><div class="metric"><small>Flujo acumulado</small><strong>${step.total} t/h</strong></div></div><div class="small"><b>Actualización residual:</b> ${step.changes.join(' | ')}</div>`;
+ el('iterationGraph').innerHTML=graphSVG(capacity,step.flow,s,t,step.path);
+ el('iterationResidual').innerHTML=matrixHTML(step.residual);
+}
+function matrixHTML(m){let h='<table class="matrix"><tr><th></th>';m.forEach((_,j)=>h+=`<th>${letter(j)}</th>`);h+='</tr>';m.forEach((r,i)=>{h+=`<tr><th>${letter(i)}</th>`;r.forEach(v=>h+=`<td>${v}</td>`);h+='</tr>'});return h+'</table>'}
+function downloadSVG(type){if(!capacity.length)return toast('No existe una red para exportar.');const s=+el('sourceSelect')?.value||0,t=+el('sinkSelect')?.value||capacity.length-1;const svg=graphSVG(capacity,type==='flow'?flow:null,s,t).replace(/^<svg /,'<svg xmlns="http://www.w3.org/2000/svg" ');const blob=new Blob([svg],{type:'image/svg+xml'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=type==='flow'?'red_flujo_final.svg':'red_capacidades.svg';a.click();URL.revokeObjectURL(a.href)}
+updateStatus();
+</script>
+</body></html>
